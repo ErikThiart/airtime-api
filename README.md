@@ -28,7 +28,7 @@ Once you have done this, send an email to apisupport@freepaid.co.za with the fol
 
 They will then allocate R10 000 worth of monopoly money to your account to test with.
 
-### Step 2: Setting up your enviroument
+### Step 2: Setting up your environment
 They use a PHP/NuSOAP library, but you're free to use whatever you're comfortable with. I also use a modified PHP NuSOAP library which you can find here https://gist.github.com/ErikThiart/b630d2d05290077b19c3b07278e57cfe I have made some modifications to make sure it works with PHP 7
 
 To fetch the balance you will use a call like this:
@@ -125,6 +125,12 @@ The steps are you place the order and receive back an order number you then use 
 
 For **pinned** you will use placeOrder to place the order, but then you will use the order number to fetch the actual pinned order receiving back a pin and serial for the voucher. (You can use the order number to re-order old vouchers, reprints).
 
+### Step 4: Go Live.
+
+When you are ready to launch your app into production change the API endpoint to https://ws.freepaid.co.za/airtimeplus/ note the "https".
+
+Register on http://services.freepaid.co.za and use those credentials to replace the credentials you got on the dev website.
+ 
 ### FAQ
 #### Does the API work with cents?
 Yes, you can order pinless in values like R2.50, R3.20. Please make sure to use a decimal point and not a comma. R4.55 is correct. R4,55 is not correct.
