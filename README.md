@@ -3,6 +3,8 @@
 
 This is an API that enables you to order Vodacom, Cell C, MTN and Telkom Airtime and Data.
 
+![Image of Freepaid](https://i.imgur.com/nfF48Jk.png)
+
 ### Overview
 You can order pinless airtime and data (direct recharge) through this API as well as order pinned vouchers. You create an account with Freepaid who will then give you a usernumber to use in the API calls.
 You deposit money into your account with them and that money will then be allocated to your virtual wallet, you can then proceed to order airtime at a discounted rate through their API and it will be billed against the money inside your virtual wallet with them. In essence as long as there is funds in your account you will be able to order pinned and pinless airtime and data at a discount.
