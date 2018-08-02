@@ -68,7 +68,7 @@ To fetch the balance you will use a call like this:
 ```
 
 ### Step 3: Getting to understand the process flow.
-The API gives you the ability to issue to kinds of vouchers, Pinned and Pinless.
+The API gives you the ability to issue two kinds of vouchers, Pinned and Pinless.
 
 
 Pinned vouchers are the most reliable to issue because they sit on their server so Freepaid can always guarantee delivery of pinned vouchers, pinless relies heavily on the networks and they do have delays from time to time.
