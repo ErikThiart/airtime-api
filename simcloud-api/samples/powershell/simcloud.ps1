@@ -101,7 +101,7 @@ try {
             try {
                 $order = Send-Simcloud 'POST' '/api/electricity.php' @{ meter_number = $Rest[0]; amount = [int]$Rest[1]; client_reference = $Rest[3]; recipient = $Rest[2] }
             } catch {
-                "AMBIGUOUS: $($_.Exception.Message). Do not retry or use a new reference. Poll client_reference `\"$($Rest[3])`\"."
+                "AMBIGUOUS: $($_.Exception.Message). Do not retry or use a new reference. Poll client_reference `"$($Rest[3])`"."
                 exit 3
             }
             if ($order.Status -in 201, 202) { Write-Result $order; $result = Wait-Electricity $Rest[3] } else { $result = $order }  # 202 = reconciliation pending: keep polling, never rebuy
