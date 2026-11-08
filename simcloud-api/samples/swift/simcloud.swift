@@ -1,5 +1,4 @@
-// SIMcloud REST API client in Swift 5.5+ (Foundation only). Runs on macOS; on Linux add
-// `import FoundationNetworking`.
+// SIMcloud REST API client in Swift 5.5+ (Foundation only). Runs on macOS and Linux.
 //
 //   swift simcloud.swift balance
 //   swift simcloud.swift network 0821234567
@@ -14,6 +13,9 @@
 //
 // Exit codes: 0 for 2xx, 1 for API errors, 3 for an ambiguous network failure on a purchase.
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking // Linux
+#endif
 
 let env = ProcessInfo.processInfo.environment
 let base = (env["SIMCLOUD_BASE_URL"] ?? "http://127.0.0.1:8081").trimmingCharacters(in: CharacterSet(charactersIn: "/"))

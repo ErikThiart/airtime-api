@@ -1,5 +1,4 @@
-// Freepaid Airtime API client in Swift 5.5+ (Foundation only). Runs on macOS; on Linux add
-// `import FoundationNetworking`.
+// Freepaid Airtime API client in Swift 5.5+ (Foundation only). Runs on macOS and Linux.
 //
 //   swiftc -O freepaid.swift -o freepaid && ./freepaid balance
 //   ./freepaid products
@@ -11,6 +10,9 @@
 // Environment (defaults target the local mock, so nothing spends money):
 //   FREEPAID_ENDPOINT, FREEPAID_USER, FREEPAID_PASS
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking // Linux
+#endif
 
 let ns = "https://ws.freepaid.co.za:443/airtimeplus/"
 let env = ProcessInfo.processInfo.environment
