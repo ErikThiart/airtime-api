@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  samples:
+    name: Sample code against the mock servers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: curl, simplexml, json
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+      - uses: oven-sh/setup-bun@v2
+      - name: Freepaid samples
+        run: ./freepaid-api/tests/run-samples.sh
+      - name: SIMcloud samples
+        run: ./simcloud-api/tests/run-samples.sh
+
+  site:
+    name: Build the website
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+      - name: Regenerate language pages and check nothing changed
+        run: |
+          python3 site/gen_language_pages.py
+          git diff --exit-code -- languages
+      - name: Build
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://erikthiart.github.io/airtime-api' }}
+        run: python3 site/build.py
+      - name: Check links
+        run: python3 site/check_links.py _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: [samples, site]
+    # Publishing is off until the repository variable PUBLISH_SITE is set to "true".
+    if: github.ref == 'refs/heads/master' && vars.PUBLISH_SITE == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

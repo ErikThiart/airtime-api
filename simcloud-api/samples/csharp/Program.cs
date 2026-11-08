@@ -5,6 +5,8 @@
 //   dotnet run -- data-products mtn
 //   dotnet run -- sms +27821234567 "Your order has shipped"
 //   dotnet run -- airtime 0821234567 vodacom 10 "Airtime for John"
+//   dotnet run -- electricity-check 01234567890
+//   dotnet run -- electricity 01234567890 150 0821234567 UnitB-2026-11
 //
 // Environment (defaults target the local mock, so nothing spends money):
 //   SIMCLOUD_BASE_URL (live: https://simcloud.co.za), SIMCLOUD_TOKEN, SIMCLOUD_POLL_MS (default 3000)
@@ -58,7 +60,21 @@ async Task<(int, JsonElement)> WaitForAirtime(long requestId)
     return last;
 }
 
-const string Usage = "Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference>";
+// Poll by client_reference until the order leaves pending. Final: success, failed, cancelled.
+async Task<(int, JsonElement)> WaitForElectricity(string clientReference)
+{
+    (int Status, JsonElement Body) last = default;
+    for (int i = 0; i < 20; i++)
+    {
+        last = await Send(HttpMethod.Get, "/api/electricity.php?client_reference=" + Uri.EscapeDataString(clientReference));
+        var status = last.Body.TryGetProperty("status", out var s) ? s.GetString() : null;
+        if (last.Status != 200 || status != "pending") return last;
+        await Task.Delay(pollMs);
+    }
+    return last;
+}
+
+const string Usage = "Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference> | electricity-check <meter> | electricity <meter> <amount> <recipient> <client_reference>";
 if (args.Length == 0) { Console.WriteLine(Usage); return 2; }
 
 try
@@ -89,6 +105,26 @@ try
                 return Emit(await WaitForAirtime(order.Body.GetProperty("request_id").GetInt64()));
             }
             return Emit(order);
+        case "electricity-check": return Emit(await Send(HttpMethod.Get, "/api/electricity.php?meter_number=" + Uri.EscapeDataString(args[1])));
+        case "electricity":
+            if (!int.TryParse(args[2], NumberStyles.None, CultureInfo.InvariantCulture, out var rand)) { Console.WriteLine("Amount must be whole rand (R55 to R1000)."); return 2; }
+            (int Status, JsonElement Body) elec;
+            try
+            {
+                elec = await Send(HttpMethod.Post, "/api/electricity.php",
+                    new { meter_number = args[1], amount = rand, client_reference = args[4], recipient = args[3] });
+            }
+            catch (Exception e) when (e is HttpRequestException or TaskCanceledException)
+            {
+                Console.WriteLine($"AMBIGUOUS: {e.Message}. Do not retry or use a new reference. Poll client_reference \"{args[4]}\".");
+                return 3;
+            }
+            if (elec.Status is 201 or 202) // 202 = reconciliation pending: keep polling, never rebuy
+            {
+                Emit(elec);
+                return Emit(await WaitForElectricity(args[4]));
+            }
+            return Emit(elec);
         default: Console.WriteLine(Usage); return 2;
     }
 }

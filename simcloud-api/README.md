@@ -56,7 +56,7 @@ python3 simcloud.py network 0821234567
 python3 simcloud.py airtime 0821234567 vodacom 10 "Airtime for John"
 ```
 
-Every language folder has the same five commands: `balance`, `network`, `data-products`, `sms`, `airtime` (queues the order, then polls until it is final). To use the real service:
+Every language folder has the same commands: `balance`, `network`, `data-products`, `sms`, `airtime` (queues the order, then polls until it is final), `electricity-check` and `electricity` (checks the meter, buys, polls for the token). To use the real service:
 
 ```bash
 export SIMCLOUD_BASE_URL=https://simcloud.co.za
@@ -84,7 +84,7 @@ python3 simcloud.py balance      # safe: reads only
 | Oracle PL/SQL | [`samples/plsql`](samples/plsql) | **Not executed** |
 | SAP ABAP | [`samples/abap`](samples/abap) | **Not executed** |
 
-"Tested" means the sample passed every check in [`tests/run-samples.sh`](tests/run-samples.sh): balance, network lookup (found and invalid), filtered data catalogue, SMS (accepted, rejected, quotes in the text), an airtime order that is queued then polled to `delivered`, the 5-minute duplicate (409), a wrong token (401), and an unreachable server on a purchase (exit code 3, meaning "outcome unknown, do not retry").
+"Tested" means the sample passed every check in [`tests/run-samples.sh`](tests/run-samples.sh): balance, network lookup (found and invalid), filtered data catalogue, SMS (accepted, rejected, quotes in the text), an airtime order that is queued then polled to `delivered`, a prepaid electricity order (meter check, purchase, polling, key-change tokens first, same reference returns the original result, reference conflict), the 5-minute duplicate (409), a wrong token (401), and an unreachable server on a purchase (exit code 3, meaning "outcome unknown, do not retry").
 
 ```bash
 ./tests/run-samples.sh            # every language installed on your machine
@@ -98,7 +98,7 @@ simcloud-api/
   README.md             this page
   docs/                 guides and reference
   openapi/              the OpenAPI contract
-  samples/<language>/   one client per language, same five commands
+  samples/<language>/   one client per language, same commands
   mock-server/          local stand-in for the REST API (and the MCP endpoint)
   tests/                scenario runner for the samples
 ```

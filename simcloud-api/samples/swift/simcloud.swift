@@ -6,6 +6,8 @@
 //   swift simcloud.swift data-products mtn
 //   swift simcloud.swift sms +27821234567 "Your order has shipped"
 //   swift simcloud.swift airtime 0821234567 vodacom 10 "Airtime for John"
+//   swift simcloud.swift electricity-check 01234567890
+//   swift simcloud.swift electricity 01234567890 150 0821234567 UnitB-2026-11
 //
 // Environment (defaults target the local mock, so nothing spends money):
 //   SIMCLOUD_BASE_URL (live: https://simcloud.co.za), SIMCLOUD_TOKEN, SIMCLOUD_POLL_MS (default 3000)
@@ -62,8 +64,19 @@ func waitForAirtime(_ requestId: Any) throws -> Result {
     return last
 }
 
+/// Poll by client_reference until the order leaves pending. Final: success, failed, cancelled.
+func waitForElectricity(_ clientReference: String) throws -> Result {
+    var last = Result(status: 200, body: ["status": "pending"])
+    for _ in 0..<20 {
+        last = try request("GET", "/api/electricity.php", query: ["client_reference": clientReference])
+        if last.status != 200 || (last.body["status"] as? String ?? "") != "pending" { return last }
+        usleep(pollMs * 1000)
+    }
+    return last
+}
+
 let a = Array(CommandLine.arguments.dropFirst())
-let usage = "Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference>"
+let usage = "Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference> | electricity-check <meter> | electricity <meter> <amount> <recipient> <client_reference>"
 guard let cmd = a.first else { print(usage); exit(2) }
 func arg(_ i: Int) -> String { i < a.count ? a[i] : { print(usage); exit(2) }() }
 
@@ -85,6 +98,21 @@ do {
         if order.status == 201 {
             _ = emit(order)
             exit(emit(try waitForAirtime(order.body["request_id"] ?? "")))
+        }
+        exit(emit(order))
+    case "electricity-check": exit(emit(try request("GET", "/api/electricity.php", query: ["meter_number": arg(1)])))
+    case "electricity":
+        guard let amount = Double(arg(2)), amount == amount.rounded() else { print("Amount must be whole rand (R55 to R1000)."); exit(2) }
+        let order: Result
+        do {
+            order = try request("POST", "/api/electricity.php", body: ["meter_number": arg(1), "amount": Int(amount), "client_reference": arg(4), "recipient": arg(3)])
+        } catch let e as TransportError {
+            print("AMBIGUOUS: \(e.message). Do not retry or use a new reference. Poll client_reference \"\(arg(4))\".")
+            exit(3)
+        }
+        if order.status == 201 || order.status == 202 { // 202 = reconciliation pending: keep polling, never rebuy
+            _ = emit(order)
+            exit(emit(try waitForElectricity(arg(4))))
         }
         exit(emit(order))
     default: print(usage); exit(2)

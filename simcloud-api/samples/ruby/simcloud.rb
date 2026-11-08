@@ -6,6 +6,8 @@
 #   ruby simcloud.rb data-products mtn
 #   ruby simcloud.rb sms +27821234567 "Your order has shipped"
 #   ruby simcloud.rb airtime 0821234567 vodacom 10 "Airtime for John"
+#   ruby simcloud.rb electricity-check 01234567890
+#   ruby simcloud.rb electricity 01234567890 150 0821234567 UnitB-2026-11
 #
 # Environment (defaults target the local mock, so nothing spends money):
 #   SIMCLOUD_BASE_URL (live: https://simcloud.co.za), SIMCLOUD_TOKEN, SIMCLOUD_POLL_MS (default 3000)
@@ -54,6 +56,17 @@ def wait_for_airtime(request_id, attempts = 20)
   [200, { 'status' => 'pending', 'message' => "Still pending after #{attempts} checks; keep polling later." }]
 end
 
+# Poll by client_reference until the order leaves pending. Final: success, failed, cancelled.
+def wait_for_electricity(client_reference, attempts = 20)
+  attempts.times do
+    status, body = request('GET', '/api/electricity.php', 'client_reference' => client_reference)
+    return [status, body] if status != 200 || body['status'] != 'pending'
+
+    sleep POLL_SECONDS
+  end
+  [200, { 'status' => 'pending', 'message' => "Still pending after #{attempts} checks; keep polling later." }]
+end
+
 def emit(status, body)
   puts "HTTP #{status}"
   puts JSON.pretty_generate(body)
@@ -82,8 +95,26 @@ if $PROGRAM_NAME == __FILE__
         puts "AMBIGUOUS: #{e.message}. Do not retry. Check GET /api/transactions.php for reference \"#{a[3]}\" first."
         3
       end
+    when 'electricity-check' then emit(*request('GET', '/api/electricity.php', 'meter_number' => a[0]))
+    when 'electricity'
+      if a[1].to_f != a[1].to_i
+        puts 'Amount must be whole rand (R55 to R1000).'
+        exit 2
+      end
+      begin
+        status, body = request('POST', '/api/electricity.php', {}, 'meter_number' => a[0], 'amount' => a[1].to_i, 'client_reference' => a[3], 'recipient' => a[2])
+        if [201, 202].include?(status) # 202 = reconciliation pending: keep polling, never rebuy
+          emit(status, body)
+          emit(*wait_for_electricity(a[3]))
+        else
+          emit(status, body)
+        end
+      rescue SocketError, Timeout::Error, SystemCallError => e
+        puts "AMBIGUOUS: #{e.message}. Do not retry or use a new reference. Poll client_reference \"#{a[3]}\"."
+        3
+      end
     else
-      puts 'Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference>'
+      puts 'Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference> | electricity-check <meter> | electricity <meter> <amount> <recipient> <client_reference>'
       2
     end
   exit code

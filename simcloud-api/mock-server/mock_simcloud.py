@@ -81,6 +81,58 @@ def query_order(service, q):
     return 200, {"status": "delivered" if done else "pending", "service": service, "request_id": int(rid), "msisdn": o["msisdn"], "network": o["network"], "amount": o["amount"], "reference": o["reference"], "platform_order_number": "P%d" % (int(rid) + 9000000), "queue_status": "Order Placed", "final_order_id": int(rid) + 1, "final_order_status": "delivered" if done else None, "error": "Success" if done else None, "created_at": o["created"], "updated_at": now()}
 
 
+ELEC = {"orders": {}, "next": 77}
+
+
+def electricity(method, q, body):
+    """Mock of /api/electricity.php. The shape of recharge_pin_information entries is illustrative:
+    confirm the real field names with SIMcloud before parsing them in production."""
+    if method == "GET" and "meter_number" in q:
+        meter = "".join(c for c in q["meter_number"][0] if c.isdigit())
+        status = "unsupported" if meter.startswith("0000") else "unknown" if meter.startswith("1111") else "success"
+        return 200, {"status": status, "meter_number": meter}
+    if method == "GET":
+        key = (q.get("client_reference") or q.get("order_id") or q.get("order_reference_id") or [None])[0]
+        order = ELEC["orders"].get(key) or next((o for o in ELEC["orders"].values() if str(o["order_id"]) == key), None)
+        if not order:
+            return err(404, "Order not found")
+        order["polls"] += 1
+        if order["polls"] < 2:
+            return 200, {"status": "pending", "order_id": order["order_id"], "client_reference": order["client_reference"]}
+        return 200, {"status": "success", "order_id": order["order_id"], "client_reference": order["client_reference"],
+                     "transaction_details": {"meter_number": order["meter_number"], "amount": order["amount"]},
+                     "recharge_pin_information": [
+                         {"entry_order": 1, "entry_instructions": "KEY-CHANGE-1", "pin": "1111 2222 3333 4444 5555"},
+                         {"entry_order": 2, "entry_instructions": "KEY-CHANGE-2", "pin": "6666 7777 8888 9999 0000"},
+                         {"entry_order": 3, "entry_instructions": "PURCHASE", "pin": "1234 5678 9012 3456 7890", "units": "%.1f kWh" % (order["amount"] * 0.95 / 2.5)}]}
+    if method == "POST":
+        for f in ("meter_number", "amount", "client_reference", "recipient"):
+            if f not in body:
+                return err(400, "Missing field: %s" % f)
+        meter = "".join(c for c in str(body["meter_number"]) if c.isdigit())
+        amount = body["amount"]
+        if not isinstance(amount, (int, float)) or amount != int(amount) or not 55 <= amount <= 1000:
+            return err(400, "Amount must be a whole number of rand between 55 and 1000")
+        if not norm_msisdn(str(body["recipient"])):
+            return err(400, "Invalid recipient")
+        ref = str(body["client_reference"])
+        existing = ELEC["orders"].get(ref)
+        if existing:
+            if (existing["meter_number"], existing["amount"]) == (meter, int(amount)):
+                return 201, existing["accepted"]  # same reference and details: the original result, no new purchase
+            return 409, {"status": "error", "code": "reference_conflict", "message": "client_reference already used with different details"}
+        if amount > state["balance"]:
+            return err(400, "Insufficient balance. Please top up your account.", required_balance=amount, available_balance=state["balance"])
+        state["balance"] -= amount
+        oid = ELEC["next"]
+        ELEC["next"] += 1
+        accepted = {"status": "success", "message": "Electricity order accepted", "order_id": oid, "process_status": "pending", "billing_status": "reserved"}
+        ELEC["orders"][ref] = {"order_id": oid, "client_reference": ref, "meter_number": meter, "amount": int(amount), "polls": 0, "accepted": accepted}
+        return 201, accepted
+    return err(405, "Method not allowed")
+
+
+
 def route(method, path, q, body):
     if path == "/api/balance.php" and method == "GET":
         return 200, {"status": "success", "user_id": 123, "username": "demo", "name": "Demo User", "balance": round(state["balance"], 2), "updated_at": now()}
@@ -119,10 +171,7 @@ def route(method, path, q, body):
     if path == "/api/vas.php":
         return (200, {"status": "success", "service": "vas", "count": len(VAS), "products": VAS}) if method == "GET" else (201, {"status": "success", "message": "VAS order queued", "order_id": 55, "transaction_id": "00000000-0000-4000-8000-000000000055", "process_status": "Pending", "billing_status": "Reserved"})
     if path == "/api/electricity.php":
-        if method == "GET" and "meter_number" in q:
-            return 200, {"status": "success", "meter_number": q["meter_number"][0], "message": "Meter is supported"}
-        if method == "POST":
-            return 201, {"status": "success", "message": "Electricity order accepted", "order_id": 77, "process_status": "pending", "billing_status": "reserved"}
+        return electricity(method, q, body)
     return err(404, "Unknown endpoint")
 
 

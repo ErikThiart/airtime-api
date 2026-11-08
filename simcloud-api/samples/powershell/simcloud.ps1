@@ -8,6 +8,8 @@
   ./simcloud.ps1 data-products mtn
   ./simcloud.ps1 sms +27821234567 "Your order has shipped"
   ./simcloud.ps1 airtime 0821234567 vodacom 10 "Airtime for John"
+  ./simcloud.ps1 electricity-check 01234567890
+  ./simcloud.ps1 electricity 01234567890 150 0821234567 UnitB-2026-11
 
 .NOTES
   Environment (defaults target the local mock, so nothing spends money):
@@ -66,6 +68,16 @@ function Wait-Airtime($RequestId) {
     $r
 }
 
+# Poll by client_reference until the order leaves pending. Final: success, failed, cancelled.
+function Wait-Electricity($ClientReference) {
+    for ($i = 0; $i -lt 20; $i++) {
+        $r = Send-Simcloud 'GET' ('/api/electricity.php?client_reference=' + [uri]::EscapeDataString($ClientReference))
+        if ($r.Status -ne 200 -or $r.Body.status -ne 'pending') { return $r }
+        Start-Sleep -Milliseconds $pollMs
+    }
+    $r
+}
+
 $result = $null
 try {
     switch ($Command) {
@@ -83,8 +95,19 @@ try {
             }
             if ($order.Status -eq 201) { Write-Result $order; $result = Wait-Airtime $order.Body.request_id } else { $result = $order }
         }
+        'electricity-check' { $result = Send-Simcloud 'GET' ('/api/electricity.php?meter_number=' + [uri]::EscapeDataString($Rest[0])) }
+        'electricity' {
+            if ($Rest[1] -notmatch '^\d+$') { 'Amount must be whole rand (R55 to R1000).'; exit 2 }
+            try {
+                $order = Send-Simcloud 'POST' '/api/electricity.php' @{ meter_number = $Rest[0]; amount = [int]$Rest[1]; client_reference = $Rest[3]; recipient = $Rest[2] }
+            } catch {
+                "AMBIGUOUS: $($_.Exception.Message). Do not retry or use a new reference. Poll client_reference `\"$($Rest[3])`\"."
+                exit 3
+            }
+            if ($order.Status -in 201, 202) { Write-Result $order; $result = Wait-Electricity $Rest[3] } else { $result = $order }  # 202 = reconciliation pending: keep polling, never rebuy
+        }
         default {
-            'Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference>'
+            'Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference> | electricity-check <meter> | electricity <meter> <amount> <recipient> <client_reference>'
             exit 2
         }
     }

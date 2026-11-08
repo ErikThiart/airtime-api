@@ -6,6 +6,8 @@
 #   ./simcloud.sh data-products mtn
 #   ./simcloud.sh sms +27821234567 "Your order has shipped"
 #   ./simcloud.sh airtime 0821234567 vodacom 10 "Airtime for John"
+#   ./simcloud.sh electricity-check 01234567890
+#   ./simcloud.sh electricity 01234567890 150 0821234567 UnitB-2026-11
 #
 # Environment (defaults target the local mock, so nothing spends money):
 #   SIMCLOUD_BASE_URL (live: https://simcloud.co.za), SIMCLOUD_TOKEN, SIMCLOUD_POLL_MS (default 3000)
@@ -60,5 +62,21 @@ case "$cmd" in
       printf '%s\n' "$res" | emit; rc=$?
     fi
     exit $rc ;;
-  *) echo "Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference>"; exit 2 ;;
+  electricity-check) req GET "/api/electricity.php?meter_number=$(urlenc "$1")" | emit ;;
+  electricity)
+    case "$2" in ''|*[!0-9]*) echo "Amount must be whole rand (R55 to R1000)."; exit 2 ;; esac
+    if ! out="$(req POST /api/electricity.php "{\"meter_number\":\"$(json_str "$1")\",\"amount\":$2,\"client_reference\":\"$(json_str "$4")\",\"recipient\":\"$(json_str "$3")\"}")"; then
+      echo "AMBIGUOUS: network failure. Do not retry or use a new reference. Poll client_reference \"$4\"."; exit 3
+    fi
+    printf '%s\n' "$out" | emit; rc=$?
+    code="$(printf '%s\n' "$out" | head -1)"
+    if [ "$code" = 201 ] || [ "$code" = 202 ]; then   # 202 = reconciliation pending: keep polling, never rebuy
+      for _ in $(seq 1 20); do
+        res="$(req GET "/api/electricity.php?client_reference=$(urlenc "$4")")"
+        [ "$(printf '%s\n' "$res" | json_get status | head -1)" = pending ] && sleep "$POLL_S" || break
+      done
+      printf '%s\n' "$res" | emit; rc=$?
+    fi
+    exit $rc ;;
+  *) echo "Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference> | electricity-check <meter> | electricity <meter> <amount> <recipient> <client_reference>"; exit 2 ;;
 esac

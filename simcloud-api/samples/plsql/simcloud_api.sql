@@ -34,6 +34,18 @@ CREATE OR REPLACE PACKAGE simcloud_api AS
   -- Polls until the order is no longer queued/pending. Returns 'delivered', 'failed' or 'pending' (gave up).
   FUNCTION wait_for_airtime (p_base IN VARCHAR2, p_token IN VARCHAR2, p_request_id IN NUMBER,
                              p_attempts IN PLS_INTEGER DEFAULT 20, p_delay_s IN NUMBER DEFAULT 3) RETURN VARCHAR2;
+
+  -- Prepaid electricity. Returns the meter check status: success, unsupported or unknown.
+  FUNCTION check_electricity_meter (p_base IN VARCHAR2, p_token IN VARCHAR2, p_meter IN VARCHAR2) RETURN VARCHAR2;
+
+  -- Places an order (whole rand, R55 to R1000; p_client_reference must be unique per purchase).
+  -- Returns the order_id. HTTP 202 reconciliation_pending is NOT an error: poll, never buy again.
+  FUNCTION create_electricity (p_base IN VARCHAR2, p_token IN VARCHAR2, p_meter IN VARCHAR2, p_amount IN PLS_INTEGER,
+                               p_recipient IN VARCHAR2, p_client_reference IN VARCHAR2) RETURN NUMBER;
+
+  -- Polls by client_reference. Returns success, failed, cancelled, or pending (gave up).
+  FUNCTION wait_for_electricity (p_base IN VARCHAR2, p_token IN VARCHAR2, p_client_reference IN VARCHAR2,
+                                 p_attempts IN PLS_INTEGER DEFAULT 20, p_delay_s IN NUMBER DEFAULT 3) RETURN VARCHAR2;
 END simcloud_api;
 /
 
@@ -133,6 +145,47 @@ CREATE OR REPLACE PACKAGE BODY simcloud_api AS
     END LOOP;
     RETURN 'pending';
   END wait_for_airtime;
+
+  FUNCTION check_electricity_meter (p_base IN VARCHAR2, p_token IN VARCHAR2, p_meter IN VARCHAR2) RETURN VARCHAR2 IS
+    l_r t_result := request(p_base, p_token, 'GET', '/api/electricity.php?meter_number=' || UTL_URL.escape(p_meter, TRUE));
+  BEGIN
+    IF l_r.http_status <> 200 THEN
+      RAISE_APPLICATION_ERROR(-20003, 'SIMcloud HTTP ' || l_r.http_status || ': ' || l_r.body.get_string('message'));
+    END IF;
+    RETURN l_r.body.get_string('status');
+  END check_electricity_meter;
+
+  FUNCTION create_electricity (p_base IN VARCHAR2, p_token IN VARCHAR2, p_meter IN VARCHAR2, p_amount IN PLS_INTEGER,
+                               p_recipient IN VARCHAR2, p_client_reference IN VARCHAR2) RETURN NUMBER IS
+    l_body JSON_OBJECT_T := JSON_OBJECT_T();
+    l_r    t_result;
+  BEGIN
+    l_body.put('meter_number', p_meter);
+    l_body.put('amount', p_amount);
+    l_body.put('client_reference', p_client_reference);
+    l_body.put('recipient', p_recipient);
+    l_r := request(p_base, p_token, 'POST', '/api/electricity.php', l_body.to_clob());
+    IF l_r.http_status NOT IN (201, 202) THEN
+      RAISE_APPLICATION_ERROR(-20004, 'SIMcloud HTTP ' || l_r.http_status || ': ' || l_r.body.get_string('message'));
+    END IF;
+    RETURN l_r.body.get_number('order_id');   -- may be NULL on 202: poll by client_reference
+  END create_electricity;
+
+  FUNCTION wait_for_electricity (p_base IN VARCHAR2, p_token IN VARCHAR2, p_client_reference IN VARCHAR2,
+                                 p_attempts IN PLS_INTEGER DEFAULT 20, p_delay_s IN NUMBER DEFAULT 3) RETURN VARCHAR2 IS
+    l_r      t_result;
+    l_status VARCHAR2(30);
+  BEGIN
+    FOR i IN 1 .. p_attempts LOOP
+      l_r := request(p_base, p_token, 'GET', '/api/electricity.php?client_reference=' || UTL_URL.escape(p_client_reference, TRUE));
+      l_status := l_r.body.get_string('status');
+      IF l_r.http_status <> 200 OR l_status <> 'pending' THEN
+        RETURN l_status;
+      END IF;
+      DBMS_SESSION.sleep(p_delay_s);
+    END LOOP;
+    RETURN 'pending';
+  END wait_for_electricity;
 
 END simcloud_api;
 /

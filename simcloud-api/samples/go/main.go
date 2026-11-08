@@ -5,6 +5,8 @@
 //	go run . data-products mtn
 //	go run . sms +27821234567 "Your order has shipped"
 //	go run . airtime 0821234567 vodacom 10 "Airtime for John"
+//	go run . electricity-check 01234567890
+//	go run . electricity 01234567890 150 0821234567 UnitB-2026-11
 //
 // Environment (defaults target the local mock, so nothing spends money):
 // SIMCLOUD_BASE_URL (live: https://simcloud.co.za), SIMCLOUD_TOKEN, SIMCLOUD_POLL_MS (default 3000)
@@ -110,10 +112,28 @@ func waitForAirtime(requestID string) (*result, error) {
 	return r, nil
 }
 
+// waitForElectricity polls by client_reference until the order leaves pending.
+func waitForElectricity(clientReference string) (*result, error) {
+	poll, _ := strconv.Atoi(env("SIMCLOUD_POLL_MS", "3000"))
+	var r *result
+	for i := 0; i < 20; i++ {
+		var err error
+		r, err = request("GET", "/api/electricity.php", url.Values{"client_reference": {clientReference}}, nil)
+		if err != nil {
+			return nil, err
+		}
+		if status, _ := r.Body["status"].(string); r.Status != 200 || status != "pending" {
+			return r, nil
+		}
+		time.Sleep(time.Duration(poll) * time.Millisecond)
+	}
+	return r, nil
+}
+
 func main() {
 	a := os.Args[1:]
 	usage := func() {
-		fmt.Println("Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference>")
+		fmt.Println("Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference> | electricity-check <meter> | electricity <meter> <amount> <recipient> <client_reference>")
 		os.Exit(2)
 	}
 	if len(a) == 0 {
@@ -155,6 +175,23 @@ func main() {
 			emit(r)
 			id := fmt.Sprintf("%.0f", r.Body["request_id"])
 			r, err = waitForAirtime(id)
+		}
+	case "electricity-check":
+		r, err = request("GET", "/api/electricity.php", url.Values{"meter_number": {arg(1)}}, nil)
+	case "electricity":
+		amount, perr := strconv.ParseFloat(arg(2), 64)
+		if perr != nil || amount != float64(int(amount)) {
+			fmt.Println("Amount must be whole rand (R55 to R1000).")
+			os.Exit(2)
+		}
+		r, err = request("POST", "/api/electricity.php", nil, map[string]any{"meter_number": arg(1), "amount": int(amount), "client_reference": arg(4), "recipient": arg(3)})
+		if err != nil {
+			fmt.Printf("AMBIGUOUS: %v. Do not retry or use a new reference. Poll client_reference %q.\n", err, a[4])
+			os.Exit(3)
+		}
+		if r.Status == 201 || r.Status == 202 { // 202 = reconciliation pending: keep polling, never rebuy
+			emit(r)
+			r, err = waitForElectricity(a[4])
 		}
 	default:
 		usage()

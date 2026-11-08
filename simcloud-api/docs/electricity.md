@@ -80,6 +80,10 @@ If SIMcloud cannot confirm a purchase, `POST` returns **HTTP 202** with `status:
 | 502 | Municipality request failed |
 | 503 | Service temporarily unavailable |
 
+## Code
+
+Every sample has `electricity-check` and `electricity` commands. See the [prepaid electricity guide](../../prepaid-electricity/README.md) for a table of commands per language, the [FAQ](../../prepaid-electricity/faq.md) and [recipes](../../prepaid-electricity/recipes.md).
+
 ## Checklist for a landlord, estate or reseller
 
 - [ ] Validate the meter with the check call before showing a price.

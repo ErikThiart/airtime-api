@@ -5,6 +5,7 @@ Integration guides, field-by-field references and runnable sample code in **13 l
 - **Freepaid Airtime API**: a SOAP API for wholesale airtime and data (Vodacom, MTN, Cell C, Telkom).
 - **SIMcloud REST API**: a JSON API for airtime, data, SMS, VAS vouchers and prepaid electricity.
 - **SIMcloud MCP server**: lets AI assistants (Claude, ChatGPT, Codex, Cursor, VS Code) use a SIMcloud account, with worked use cases.
+- **Prepaid electricity guide**: how to check a meter, buy a token and handle key changes and uncertain results, with code in 12 languages.
 
 Everything runs offline first. Each API folder ships a **local mock server**, so you can build and test with no account and no money.
 
@@ -15,6 +16,8 @@ Everything runs offline first. Each API folder ships a **local mock server**, so
 | [`freepaid-api/`](freepaid-api/) | The Freepaid Airtime API: PINLESS and PINNED airtime, data | SOAP 1.1, RPC/encoded | [README](freepaid-api/README.md) |
 | [`simcloud-api/`](simcloud-api/) | The SIMcloud API: airtime, data, SMS, VAS, electricity, balance, history | JSON over HTTPS | [README](simcloud-api/README.md) |
 | [`simcloud-mcp/`](simcloud-mcp/) | The SIMcloud MCP server and AI use cases | JSON-RPC over HTTPS, OAuth | [README](simcloud-mcp/README.md) |
+| [`prepaid-electricity/`](prepaid-electricity/) | Buying prepaid electricity from code: how it works, FAQ, recipes | JSON over HTTPS | [Guide](prepaid-electricity/README.md) |
+| [`languages/`](languages/) | One page per language with commands, gotchas and links | | [Index](languages/README.md) |
 
 **Not sure which API?** If you want JSON, SMS, vouchers or electricity, use SIMcloud. If you already have a Freepaid account and a SOAP integration, or want the Freepaid wholesale PINNED vouchers, use Freepaid. If you want an AI assistant to do the work, use the MCP server.
 
@@ -84,6 +87,9 @@ airtime-api/
   freepaid-api/          SOAP API: docs, samples, mock server, WSDL, tests
   simcloud-api/          REST API: docs, samples, mock server, OpenAPI, tests
   simcloud-mcp/          MCP server: docs, use cases, client config, samples
+  prepaid-electricity/   electricity guide, FAQ and recipes
+  languages/             one landing page per language
+  site/                  builds the website from these Markdown files
 ```
 
 ## Support and sources

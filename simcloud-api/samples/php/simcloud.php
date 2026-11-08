@@ -7,6 +7,8 @@
  *   php simcloud.php data-products mtn
  *   php simcloud.php sms +27821234567 "Your order has shipped"
  *   php simcloud.php airtime 0821234567 vodacom 10 "Airtime for John"
+ *   php simcloud.php electricity-check 01234567890
+ *   php simcloud.php electricity 01234567890 150 0821234567 UnitB-2026-11
  *
  * Environment (defaults target the local mock, so nothing spends money):
  *   SIMCLOUD_BASE_URL (live: https://simcloud.co.za), SIMCLOUD_TOKEN, SIMCLOUD_POLL_MS (default 3000)
@@ -56,6 +58,20 @@ function sc_wait_for_airtime($requestId, int $attempts = 20): array
     return [200, ['status' => 'pending', 'message' => "Still pending after $attempts checks; keep polling later."]];
 }
 
+/** Poll by client_reference until the order leaves pending. Final: success, failed, cancelled. */
+function sc_wait_for_electricity(string $clientReference, int $attempts = 20): array
+{
+    $pollUs = (int) sc_env('SIMCLOUD_POLL_MS', '3000') * 1000;
+    for ($i = 0; $i < $attempts; $i++) {
+        [$status, $body] = sc_request('GET', '/api/electricity.php', ['client_reference' => $clientReference]);
+        if ($status !== 200 || ($body['status'] ?? '') !== 'pending') {
+            return [$status, $body];
+        }
+        usleep($pollUs);
+    }
+    return [200, ['status' => 'pending', 'message' => "Still pending after $attempts checks; keep polling later."]];
+}
+
 function sc_emit(int $status, array $body): int
 {
     echo "HTTP $status\n", json_encode($body, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), "\n";
@@ -86,8 +102,27 @@ if (PHP_SAPI === 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE
                     $code = sc_emit($status, $body);
                 }
                 break;
+            case 'electricity-check': $code = sc_emit(...sc_request('GET', '/api/electricity.php', ['meter_number' => $a[1]])); break;
+            case 'electricity':
+                if ((float) $a[2] != (int) $a[2]) {
+                    echo "Amount must be whole rand (R55 to R1000).\n";
+                    exit(2);
+                }
+                try {
+                    [$status, $body] = sc_request('POST', '/api/electricity.php', [], ['meter_number' => $a[1], 'amount' => (int) $a[2], 'client_reference' => $a[4], 'recipient' => $a[3]]);
+                } catch (RuntimeException $e) {
+                    echo 'AMBIGUOUS: ', $e->getMessage(), ". Do not retry or use a new reference. Poll client_reference \"{$a[4]}\".\n";
+                    exit(3);
+                }
+                if ($status === 201 || $status === 202) { // 202 = reconciliation pending: keep polling, never rebuy
+                    sc_emit($status, $body);
+                    $code = sc_emit(...sc_wait_for_electricity($a[4]));
+                } else {
+                    $code = sc_emit($status, $body);
+                }
+                break;
             default:
-                echo "Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference>\n";
+                echo "Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference> | electricity-check <meter> | electricity <meter> <amount> <recipient> <client_reference>\n";
         }
     } catch (Throwable $e) {
         fwrite(STDERR, 'error: ' . $e->getMessage() . "\n");

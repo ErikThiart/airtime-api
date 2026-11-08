@@ -1,6 +1,6 @@
 # Language notes
 
-Which sample fits your stack, which JSON library to use in production, and the one thing to watch. All samples expose `balance`, `network`, `data-products`, `sms` and `airtime`, and read `SIMCLOUD_BASE_URL`, `SIMCLOUD_TOKEN` and `SIMCLOUD_POLL_MS`.
+Which sample fits your stack, which JSON library to use in production, and the one thing to watch. All samples expose `balance`, `network`, `data-products`, `sms`, `airtime`, `electricity-check` and `electricity`, and read `SIMCLOUD_BASE_URL`, `SIMCLOUD_TOKEN` and `SIMCLOUD_POLL_MS`.
 
 [SIMcloud API home](../README.md)
 

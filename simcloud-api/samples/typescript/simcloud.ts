@@ -6,6 +6,8 @@
  *   bun simcloud.ts data-products mtn
  *   bun simcloud.ts sms +27821234567 "Your order has shipped"
  *   bun simcloud.ts airtime 0821234567 vodacom 10 "Airtime for John"
+ *   bun simcloud.ts electricity-check 01234567890
+ *   bun simcloud.ts electricity 01234567890 150 0821234567 UnitB-2026-11
  *
  * Environment (defaults target the local mock, so nothing spends money):
  *   SIMCLOUD_BASE_URL (live: https://simcloud.co.za), SIMCLOUD_TOKEN, SIMCLOUD_POLL_MS (default 3000)
@@ -58,6 +60,20 @@ export const sendSms = (recipient: string, message: string) => request('POST', '
 export const createAirtimeOrder = (msisdn: string, network: string, amount: number, reference: string) =>
   request<AirtimeQueued>('POST', '/api/airtime.php', { body: { msisdn, network, amount, reference } });
 
+export const checkElectricityMeter = (meter: string) => request('GET', '/api/electricity.php', { query: { meter_number: meter } });
+export const createElectricityOrder = (meter: string, amount: number, recipient: string, clientReference: string) =>
+  request('POST', '/api/electricity.php', { body: { meter_number: meter, amount, client_reference: clientReference, recipient } });
+
+/** Poll by client_reference until the order leaves pending. Final: success, failed, cancelled. */
+export async function waitForElectricity(clientReference: string, attempts = 20): Promise<ApiResult> {
+  for (let i = 0; i < attempts; i++) {
+    const r = await request('GET', '/api/electricity.php', { query: { client_reference: clientReference } });
+    if (r.status !== 200 || r.body.status !== 'pending') return r;
+    await new Promise((resolve) => setTimeout(resolve, POLL_MS));
+  }
+  return { status: 200, body: { status: 'pending', message: `Still pending after ${attempts} checks; keep polling later.` } };
+}
+
 /** Poll until the order leaves queued/pending. */
 export async function waitForAirtime(requestId: number, attempts = 20): Promise<ApiResult> {
   for (let i = 0; i < attempts; i++) {
@@ -91,6 +107,17 @@ if (process.argv[1]?.endsWith('simcloud.ts')) {
       console.log(`AMBIGUOUS: ${(err as Error).message}. Do not retry. Check GET /api/transactions.php for reference "${a[3]}" first.`);
       code = 3;
     }
-  } else console.log('Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference>');
+  } else if (cmd === 'electricity-check') code = emit(await checkElectricityMeter(a[0]));
+  else if (cmd === 'electricity') {
+    if (!Number.isInteger(Number(a[1]))) { console.log('Amount must be whole rand (R55 to R1000).'); process.exit(2); }
+    try {
+      const order = await createElectricityOrder(a[0], Number(a[1]), a[2], a[3]);
+      if (order.status === 201 || order.status === 202) { emit(order); code = emit(await waitForElectricity(a[3])); } // 202 = reconciliation pending: keep polling, never rebuy
+      else code = emit(order);
+    } catch (err) {
+      console.log(`AMBIGUOUS: ${(err as Error).message}. Do not retry or use a new reference. Poll client_reference "${a[3]}".`);
+      code = 3;
+    }
+  } else console.log('Commands: balance | network <msisdn> | data-products [network] | sms <+27...> <text> | airtime <msisdn> <network> <amount> <reference> | electricity-check <meter> | electricity <meter> <amount> <recipient> <client_reference>');
   process.exit(code);
 }
