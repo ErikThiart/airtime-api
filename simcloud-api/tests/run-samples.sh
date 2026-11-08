@@ -41,7 +41,7 @@ trap '[ -n "$MOCK_PID" ] && kill "$MOCK_PID" 2>/dev/null' EXIT
 
 run() { (cd "$ROOT/$DIR_" && eval "$CMD_ $*" 2>&1); }
 rc()  { (cd "$ROOT/$DIR_" && eval "$CMD_ $*" >/dev/null 2>&1; echo $?); }
-check() { if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)); echo "  FAIL [$LANG_] $1"; fi; }
+check() { if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)); echo "  FAIL [$LANG_] $1"; echo "    output: $(printf %s "${out:-}" | head -c 300 | tr "\n" " ")"; fi; }
 
 for LANG_ in "${ORDER[@]}"; do
   if [ $# -gt 0 ] && [[ ! " $* " =~ " $LANG_ " ]]; then continue; fi

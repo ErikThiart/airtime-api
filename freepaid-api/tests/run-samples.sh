@@ -41,7 +41,7 @@ trap '[ -n "$MOCK_PID" ] && kill "$MOCK_PID" 2>/dev/null' EXIT
 field() { awk -v k="$1" '$1==k {print $2; exit}' ; }   # value of "key   value" line
 run() { (cd "$ROOT/$DIR_" && eval "$CMD_ $*" 2>&1); }
 check() {  # description, condition
-  if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)); echo "  FAIL [$LANG_] $1"; fi
+  if eval "$2"; then pass=$((pass+1)); else fail=$((fail+1)); echo "  FAIL [$LANG_] $1"; echo "    output: $(printf %s "${out:-}" | head -c 300 | tr "\n" " ")"; fi
 }
 
 for LANG_ in "${ORDER[@]}"; do
