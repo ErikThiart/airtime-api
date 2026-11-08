@@ -97,3 +97,7 @@ airtime-api/
 | SIMcloud plugins | [WooCommerce](https://github.com/ErikThiart/simcloud-woocommerce) · [Codex / MCP](https://github.com/ErikThiart/simcloud-codex-plugin) |
 
 The guides and samples here are maintained by [Erik Thiart](https://github.com/ErikThiart). The mock servers follow the published WSDL, OpenAPI file and documentation, and are **not** the real services: always confirm behaviour with the provider and test live with small amounts. The original Freepaid guide is kept as [freepaid-api/docs/original-vendor-guide.md](freepaid-api/docs/original-vendor-guide.md). Freepaid and SIMcloud are products of FREEPAID (PTY) LTD.
+
+## Licence
+
+The code and guides in this repository are released under the [MIT licence](LICENSE). The WSDL copy, the OpenAPI copy and the original vendor guide describe FREEPAID (PTY) LTD's services and remain theirs.
