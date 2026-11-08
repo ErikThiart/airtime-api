@@ -88,7 +88,7 @@ curl -s "https://simcloud.co.za/api/electricity.php?client_reference=UnitB-2026-
 
 ## Code in every language
 
-Each sample has the same commands, `electricity-check` and `electricity`. They poll for you and handle the safety cases below. Tested means it passed the full scenario against the local mock.
+Each sample has the same commands, `electricity-check` and `electricity`. They poll for you and handle the safety cases below. Tested means it passes the full scenario against the local mock on every push.
 
 | Language | Run it | Tested |
 |---|---|---|
@@ -101,8 +101,8 @@ Each sample has the same commands, `electricity-check` and `electricity`. They p
 | Ruby | `ruby simcloud.rb electricity 01234567890 150 0821234567 REF-1` | Yes |
 | Swift | `swift simcloud.swift electricity 01234567890 150 0821234567 REF-1` | Yes |
 | Bash / cURL | `bash simcloud.sh electricity 01234567890 150 0821234567 REF-1` | Yes |
-| C# / .NET | `dotnet run -- electricity 01234567890 150 0821234567 REF-1` | Not compiled |
-| PowerShell | `./simcloud.ps1 electricity 01234567890 150 0821234567 REF-1` | Not executed |
+| C# / .NET | `dotnet run -- electricity 01234567890 150 0821234567 REF-1` | Yes |
+| PowerShell | `./simcloud.ps1 electricity 01234567890 150 0821234567 REF-1` | Yes |
 | Oracle PL/SQL | `simcloud_api.create_electricity(...)` | Not executed |
 
 The code is in [`simcloud-api/samples/<language>`](../simcloud-api/samples). SAP ABAP has the airtime flow; electricity follows the same pattern.

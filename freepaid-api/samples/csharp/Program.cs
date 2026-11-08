@@ -13,8 +13,7 @@
 // Why not "Add Service Reference" / svcutil / WCF? The WSDL is RPC/encoded (SOAP section 5),
 // which WCF and svcutil do not support. A hand-built envelope over HttpClient is simpler and works.
 //
-// STATUS: written against the WSDL and the same envelope the tested Java, Go and Python samples send,
-// but not compiled in this repository's CI (no .NET SDK was available). Run it against the mock first.
+// STATUS: built and run against the mock server by this repository's CI (tests/run-samples.sh).
 using System.Globalization;
 using System.Net.Http;
 using System.Security;

@@ -1,5 +1,7 @@
 # South African airtime, data, SMS and electricity APIs: guides and sample code
 
+[![CI](https://github.com/ErikThiart/airtime-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ErikThiart/airtime-api/actions/workflows/ci.yml)
+
 Integration guides, field-by-field references and runnable sample code in **13 languages** for two South African prepaid platforms from FREEPAID (PTY) LTD:
 
 - **Freepaid Airtime API**: a SOAP API for wholesale airtime and data (Vodacom, MTN, Cell C, Telkom).
@@ -23,12 +25,12 @@ Everything runs offline first. Each API folder ships a **local mock server**, so
 
 ## Languages
 
-Both APIs have the same commands in every language. "Tested" means it ran a full scenario against the local mock.
+Both APIs have the same commands in every language. "Tested" means it passes a full scenario against the local mock on every push (GitHub Actions, Ubuntu).
 
 | Language | Typical use | Freepaid | SIMcloud |
 |---|---|---|---|
 | Java | Banks, insurers, core systems | [tested](freepaid-api/samples/java) | [tested](simcloud-api/samples/java) |
-| C# / .NET | Enterprise back office | [written](freepaid-api/samples/csharp) | [written](simcloud-api/samples/csharp) |
+| C# / .NET | Enterprise back office | [tested](freepaid-api/samples/csharp) | [tested](simcloud-api/samples/csharp) |
 | Python | Automation, data, reconciliation | [tested](freepaid-api/samples/python) | [tested](simcloud-api/samples/python) |
 | Go | Services and infrastructure | [tested](freepaid-api/samples/go) | [tested](simcloud-api/samples/go) |
 | Node.js | Web back ends, serverless | [tested](freepaid-api/samples/node) | [tested](simcloud-api/samples/node) |
@@ -37,11 +39,11 @@ Both APIs have the same commands in every language. "Tested" means it ran a full
 | Ruby | Rails apps, scripts | [tested](freepaid-api/samples/ruby) | [tested](simcloud-api/samples/ruby) |
 | Swift | Apple platforms, back-office tools | [tested](freepaid-api/samples/swift) | [tested](simcloud-api/samples/swift) |
 | cURL / Bash | Ops scripts, smoke tests | [tested](freepaid-api/samples/curl) | [tested](simcloud-api/samples/curl) |
-| PowerShell | Windows administration | [written](freepaid-api/samples/powershell) | [written](simcloud-api/samples/powershell) |
+| PowerShell | Windows administration | [tested](freepaid-api/samples/powershell) | [tested](simcloud-api/samples/powershell) |
 | Oracle PL/SQL | Bank database layer, batch jobs | [written](freepaid-api/samples/plsql) | [written](simcloud-api/samples/plsql) |
 | SAP ABAP | SAP ERP and S/4HANA | [written](freepaid-api/samples/abap) | [written](simcloud-api/samples/abap) |
 
-**"Written" means not executed here.** The C#, PowerShell, PL/SQL and ABAP samples send the same requests as the tested ones, but no .NET SDK, PowerShell, Oracle database or SAP system was available to run them. Each file says so in its header. Run them against the mock first and report anything that breaks.
+**"Written" means not executed.** The PL/SQL and ABAP samples send the same requests as the tested ones, but no Oracle database or SAP system was available to run them. Each file says so in its header. Run them against the mock first and report anything that breaks.
 
 COBOL, RPG, Kotlin, Scala and other stacks: see the language notes in each API folder for how to approach them.
 

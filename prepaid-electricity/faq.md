@@ -49,7 +49,7 @@ python3 simcloud-api/samples/python/simcloud.py electricity 01234567890 150 0821
 
 ## Which languages are supported?
 
-The API is plain JSON over HTTPS, so any language works. This repository has tested examples for Java, Go, Python, Node.js, TypeScript, PHP, Ruby, Swift and Bash, and written (not yet executed) examples for C#, PowerShell and Oracle PL/SQL. See [the language pages](../languages/README.md).
+The API is plain JSON over HTTPS, so any language works. This repository has tested examples for Java, C#, Go, Python, Node.js, TypeScript, PHP, Ruby, Swift, PowerShell and Bash, and a written (not yet executed) example for Oracle PL/SQL. See [the language pages](../languages/README.md).
 
 ## Which municipalities are covered?
 

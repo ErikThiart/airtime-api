@@ -82,14 +82,14 @@ export FREEPAID_PASS=your-password
 | Ruby | [`samples/ruby`](samples/ruby) | Yes |
 | Swift | [`samples/swift`](samples/swift) | Yes |
 | cURL / Bash | [`samples/curl`](samples/curl) | Yes |
-| C# / .NET | [`samples/csharp`](samples/csharp) | **Not compiled** (no .NET SDK available) |
-| PowerShell | [`samples/powershell`](samples/powershell) | **Not executed** |
+| C# / .NET | [`samples/csharp`](samples/csharp) | Yes (CI, Linux) |
+| PowerShell | [`samples/powershell`](samples/powershell) | Yes (CI, Linux) |
 | Oracle PL/SQL | [`samples/plsql`](samples/plsql) | **Not executed** |
 | SAP ABAP | [`samples/abap`](samples/abap) | **Not executed** |
 
-"Tested" means the sample ran the full scenario in [`tests/run-samples.sh`](tests/run-samples.sh) against the local mock: balance, product list, PINLESS order and status polling, PINNED order and PIN retrieval, insufficient funds, and a password containing XML special characters. The four untested samples send the same envelope and are marked in their file headers. Run them against the mock first.
+"Tested" means the sample ran the full scenario in [`tests/run-samples.sh`](tests/run-samples.sh) against the local mock: balance, product list, PINLESS order and status polling, PINNED order and PIN retrieval, insufficient funds, and a password containing XML special characters. The two untested samples (PL/SQL and ABAP) send the same envelope and are marked in their file headers. Run them against the mock first.
 
-Run the tests yourself:
+The tests run on every push in [GitHub Actions](../.github/workflows/ci.yml) (Ubuntu, with .NET, PowerShell and Swift). Run them yourself:
 
 ```bash
 ./tests/run-samples.sh            # every language installed on your machine

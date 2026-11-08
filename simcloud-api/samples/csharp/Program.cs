@@ -13,8 +13,7 @@
 //
 // Exit codes: 0 for 2xx, 1 for API errors, 3 for an ambiguous network failure on a purchase.
 //
-// STATUS: not compiled in this repository's test run (no .NET SDK was available). It follows the same
-// logic as the tested Python, Go and Java samples. Run it against the mock first.
+// STATUS: built and run against the mock server by this repository's CI (tests/run-samples.sh).
 using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text;

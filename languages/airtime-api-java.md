@@ -1,6 +1,6 @@
 # Airtime and prepaid electricity API in Java
 
-Working Java examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for banks, insurers and core systems. These samples are tested against the local mock servers.
+Working Java examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for banks, insurers and core systems. These samples are tested on every push against the local mock servers.
 
 [All languages](README.md) · [Repository home](../README.md)
 

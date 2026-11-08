@@ -17,14 +17,13 @@ LANGS = [
                "Format numbers with `Locale.ROOT`. A South African or German default locale can write `10,00`, which Freepaid rejects.",
                "The JDK has no JSON parser. The SIMcloud sample reads two fields with a regex to stay dependency-free. Use Jackson or Gson in production.",
                "DTDs are disabled in the XML parser to prevent XXE."]),
-    dict(slug="csharp", name="C# and .NET", who="enterprise back offices and Windows shops", tested=False,
+    dict(slug="csharp", name="C# and .NET", who="enterprise back offices and Windows shops", tested=True,
          need=".NET 6 or newer. No NuGet packages: `HttpClient`, `XDocument` and `System.Text.Json`.",
          fp="dotnet run --", fpdir="csharp", fpfile="Program.cs",
          sc="dotnet run --", scfile="Program.cs",
          tips=["WCF, `svcutil` and \"Add Service Reference\" cannot consume the Freepaid WSDL (RPC/encoded). Post the envelope with `HttpClient`.",
                "Use `CultureInfo.InvariantCulture` for every number you send, so `10.00` never becomes `10,00`.",
-               "Reuse one `HttpClient` for the life of the application.",
-               "**Not compiled in this repository** (no .NET SDK was available). The logic matches the tested Java and Go samples. Run it against the mock first."]),
+               "Reuse one `HttpClient` for the life of the application."]),
     dict(slug="python", name="Python", who="automation, data teams and reconciliation", tested=True,
          need="Python 3.8 or newer. Standard library only.",
          fp="python3 freepaid.py", fpdir="python", fpfile="freepaid.py",
@@ -81,13 +80,13 @@ LANGS = [
          tips=["Good for a quick check that credentials and network access work, and for CI smoke tests against the mock.",
                "The reply parser is written for the fixed Freepaid schema only.",
                "Quote the bearer header and the JSON body."]),
-    dict(slug="powershell", name="PowerShell", who="Windows administration and scheduled tasks", tested=False,
+    dict(slug="powershell", name="PowerShell", who="Windows administration and scheduled tasks", tested=True,
          need="PowerShell 5.1 (Windows) or PowerShell 7. No modules.",
          fp="./freepaid.ps1", fpdir="powershell", fpfile="freepaid.ps1",
          sc="./simcloud.ps1", scfile="simcloud.ps1",
          tips=["Use `Invoke-WebRequest`. Error handling for 4xx differs between Windows PowerShell 5.1 and PowerShell 7; the SIMcloud sample handles both.",
                "Store credentials in the SecretManagement module or a vault, not in the script.",
-               "**Not executed in this repository** (no PowerShell was available). It sends the same requests as the tested samples. Run it against the mock first."]),
+               "The tests run it on PowerShell 7 (Linux). Windows PowerShell 5.1 is supported by the code but not covered by CI."]),
     dict(slug="oracle-plsql", name="Oracle PL/SQL", who="bank database layers and batch jobs", tested=False,
          need="Oracle 12c or newer (12.2 for `JSON_OBJECT_T`), `UTL_HTTP`, a network ACL and an Oracle wallet for HTTPS.",
          fp="@freepaid_api.sql", fpdir="plsql", fpfile="freepaid_api.sql",
@@ -109,7 +108,7 @@ GH = "https://github.com/ErikThiart/airtime-api/blob/master"
 
 
 def page(l):
-    status = "tested against the local mock servers" if l["tested"] else "written but **not executed** here (see the notes below)"
+    status = "tested on every push against the local mock servers" if l["tested"] else "written but **not executed** here (see the notes below)"
     tips = "\n".join("- " + t for t in l["tips"])
     elec = "" if l["slug"] == "sap-abap" else f"""
 ## Buy prepaid electricity in {l['name']}
@@ -200,7 +199,7 @@ def main():
         with open(os.path.join(out, f"airtime-api-{l['slug']}.md"), "w") as f:
             f.write(page(l).replace("{OTHERS}", others))
     rows = "\n".join(
-        f"| [{l['name']}](airtime-api-{l['slug']}.md) | {l['who'].capitalize()} | {'Tested' if l['tested'] else 'Not executed here'} |" for l in LANGS)
+        f"| [{l['name']}](airtime-api-{l['slug']}.md) | {l['who'][0].upper() + l['who'][1:]} | {'Tested' if l['tested'] else 'Not executed here'} |" for l in LANGS)
     with open(os.path.join(out, "README.md"), "w") as f:
         f.write(f"""# Airtime and prepaid electricity API examples by language
 
@@ -212,7 +211,7 @@ Pick your language for working examples of the Freepaid SOAP airtime API and the
 |---|---|---|
 {rows}
 
-"Tested" means the sample passed the full scenario in `tests/run-samples.sh` against the local mock servers. "Not executed here" means it sends the same requests as the tested samples, but no toolchain for it was available when the repository was written. Run it against the mock first.
+"Tested" means the sample passes the full scenario in `tests/run-samples.sh` against the local mock servers on every push (GitHub Actions). "Not executed here" means it sends the same requests as the tested samples, but no Oracle database or SAP system was available. Run it against the mock first.
 
 COBOL, RPG, Kotlin, Scala, Rust and other stacks: see the language notes in the [Freepaid](../freepaid-api/docs/language-guide.md#not-covered-and-how-to-approach-them) and [SIMcloud](../simcloud-api/docs/language-notes.md#not-covered-and-how-to-approach-them) guides.
 """)

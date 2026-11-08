@@ -1,6 +1,6 @@
 # Airtime and prepaid electricity API in Node.js
 
-Working Node.js examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for web back ends and serverless functions. These samples are tested against the local mock servers.
+Working Node.js examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for web back ends and serverless functions. These samples are tested on every push against the local mock servers.
 
 [All languages](README.md) · [Repository home](../README.md)
 

@@ -1,6 +1,6 @@
 # Airtime and prepaid electricity API in PowerShell
 
-Working PowerShell examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for Windows administration and scheduled tasks. These samples are written but **not executed** here (see the notes below).
+Working PowerShell examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for Windows administration and scheduled tasks. These samples are tested on every push against the local mock servers.
 
 [All languages](README.md) · [Repository home](../README.md)
 
@@ -59,7 +59,7 @@ More in the [prepaid electricity guide](../prepaid-electricity/README.md).
 
 - Use `Invoke-WebRequest`. Error handling for 4xx differs between Windows PowerShell 5.1 and PowerShell 7; the SIMcloud sample handles both.
 - Store credentials in the SecretManagement module or a vault, not in the script.
-- **Not executed in this repository** (no PowerShell was available). It sends the same requests as the tested samples. Run it against the mock first.
+- The tests run it on PowerShell 7 (Linux). Windows PowerShell 5.1 is supported by the code but not covered by CI.
 
 ## Safety rules that apply in every language
 

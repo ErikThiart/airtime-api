@@ -7,7 +7,7 @@ Which sample fits your stack, which JSON library to use in production, and the o
 | Stack | Sample | HTTP | JSON in production | Watch out for |
 |---|---|---|---|---|
 | **Java** | [`java/SimcloudDemo.java`](../samples/java/SimcloudDemo.java) | `java.net.http.HttpClient` | Jackson or Gson. The JDK has none, so the sample reads two fields with a regex | Do not do that in production. Set connect and request timeouts, as the sample does |
-| **C# / .NET** | [`csharp/`](../samples/csharp) | `HttpClient` | `System.Text.Json` | Not compiled in this repo. Reuse one `HttpClient` for the life of the app |
+| **C# / .NET** | [`csharp/`](../samples/csharp) | `HttpClient` | `System.Text.Json` | Tested in CI. Reuse one `HttpClient` for the life of the app |
 | **Python** | [`python/simcloud.py`](../samples/python/simcloud.py) | `urllib` (or `requests`) | `json` | `urllib` raises on 4xx. The sample catches `HTTPError` and returns the body |
 | **Node.js** | [`node/simcloud.mjs`](../samples/node/simcloud.mjs) | built-in `fetch` | `JSON` | `fetch` does not throw on 4xx. Check `res.status` |
 | **TypeScript** | [`typescript/simcloud.ts`](../samples/typescript/simcloud.ts) | built-in `fetch` | `JSON` plus the interfaces in the file | Generate types from the [OpenAPI file](../openapi/README.md) for the full surface |
@@ -16,7 +16,7 @@ Which sample fits your stack, which JSON library to use in production, and the o
 | **Ruby** | [`ruby/simcloud.rb`](../samples/ruby/simcloud.rb) | `net/http` | `json` | |
 | **Swift** | [`swift/simcloud.swift`](../samples/swift/simcloud.swift) | `URLSession` | `Codable` (the sample uses `JSONSerialization` for brevity) | Never ship the token in an app. Call your own server |
 | **Bash / cURL** | [`curl/simcloud.sh`](../samples/curl/simcloud.sh) | curl | `jq` (the sample avoids it) | Quote the bearer header and the JSON body |
-| **PowerShell** | [`powershell/simcloud.ps1`](../samples/powershell/simcloud.ps1) | `Invoke-WebRequest` | `ConvertFrom-Json` | Not executed in this repo. 4xx handling differs between Windows PowerShell 5.1 and PowerShell 7 |
+| **PowerShell** | [`powershell/simcloud.ps1`](../samples/powershell/simcloud.ps1) | `Invoke-WebRequest` | `ConvertFrom-Json` | Tested in CI on PowerShell 7. 4xx handling differs between Windows PowerShell 5.1 and PowerShell 7 |
 | **Oracle PL/SQL** | [`plsql/simcloud_api.sql`](../samples/plsql/simcloud_api.sql) | `UTL_HTTP` | `JSON_OBJECT_T` (12.2+) | Not executed in this repo. Needs a network ACL and a wallet |
 | **SAP ABAP** | [`abap/zsimcloud_demo.abap`](../samples/abap/zsimcloud_demo.abap) | `CL_HTTP_CLIENT` | `/UI2/CL_JSON` | Not executed in this repo. Needs the certificate in STRUST |
 

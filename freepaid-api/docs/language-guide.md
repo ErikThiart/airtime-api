@@ -7,7 +7,7 @@ Which sample fits your stack, and the one thing to watch in each. All samples ex
 | Stack | Typical use | Sample | Needs | Watch out for |
 |---|---|---|---|---|
 | **Java** | Banks, insurers, core systems | [`java/FreepaidDemo.java`](../samples/java/FreepaidDemo.java) | JDK 11+ only | JAX-WS cannot consume this WSDL. Format floats with `Locale.ROOT`. DTDs are disabled for XXE safety |
-| **C# / .NET** | Enterprise back office, Windows shops | [`csharp/`](../samples/csharp) | .NET 6+ | Not compiled in this repo. WCF cannot consume this WSDL. Use `CultureInfo.InvariantCulture` for floats |
+| **C# / .NET** | Enterprise back office, Windows shops | [`csharp/`](../samples/csharp) | .NET 6+ | Tested in CI. WCF cannot consume this WSDL. Use `CultureInfo.InvariantCulture` for floats |
 | **Python** | Data teams, automation, reconciliation | [`python/freepaid.py`](../samples/python/freepaid.py) | Python 3.8+, no packages | `zeep` will not work with this WSDL. Use the standard library |
 | **Node.js** | Web back ends, serverless | [`node/freepaid.mjs`](../samples/node/freepaid.mjs) | Node 18+ | No built-in XML parser. The sample reads the fixed reply with regular expressions; use `fast-xml-parser` for anything bigger |
 | **TypeScript** | Typed Node back ends | [`typescript/freepaid.ts`](../samples/typescript/freepaid.ts) | Node 18+ with `tsx`, or Bun | Same as Node, plus a typed reply interface |
@@ -16,7 +16,7 @@ Which sample fits your stack, and the one thing to watch in each. All samples ex
 | **Ruby** | Rails apps, scripts | [`ruby/freepaid.rb`](../samples/ruby/freepaid.rb) | Ruby 2.6+ | On Ruby 3+ add the `rexml` gem |
 | **Swift** | iOS and macOS back-office tools | [`swift/freepaid.swift`](../samples/swift/freepaid.swift) | Swift 5.5+ | Do not ship user and password in a mobile app. Call your own server instead |
 | **Bash / cURL** | Ops scripts, quick checks, CI smoke tests | [`curl/freepaid.sh`](../samples/curl/freepaid.sh) | bash, curl, sed, awk | The reply parser is for the fixed schema only |
-| **PowerShell** | Windows administration, scheduled tasks | [`powershell/freepaid.ps1`](../samples/powershell/freepaid.ps1) | PowerShell 5.1+ | Not executed in this repo |
+| **PowerShell** | Windows administration, scheduled tasks | [`powershell/freepaid.ps1`](../samples/powershell/freepaid.ps1) | PowerShell 5.1+ | Tested in CI on PowerShell 7 |
 | **Oracle PL/SQL** | Bank database layer, batch jobs | [`plsql/freepaid_api.sql`](../samples/plsql/freepaid_api.sql) | Oracle 12c+, `UTL_HTTP`, ACL, wallet | Not executed in this repo. DBA must grant the network ACL |
 | **SAP ABAP** | SAP ERP and S/4HANA | [`abap/zfreepaid_demo.abap`](../samples/abap/zfreepaid_demo.abap) | NetWeaver 7.40+, STRUST certificate | Not executed in this repo |
 

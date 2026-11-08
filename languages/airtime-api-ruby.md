@@ -1,6 +1,6 @@
 # Airtime and prepaid electricity API in Ruby
 
-Working Ruby examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for Rails apps and scripts. These samples are tested against the local mock servers.
+Working Ruby examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for Rails apps and scripts. These samples are tested on every push against the local mock servers.
 
 [All languages](README.md) · [Repository home](../README.md)
 

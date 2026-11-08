@@ -1,6 +1,6 @@
 # Airtime and prepaid electricity API in C# and .NET
 
-Working C# and .NET examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for enterprise back offices and Windows shops. These samples are written but **not executed** here (see the notes below).
+Working C# and .NET examples for South African **airtime, data, SMS and prepaid electricity**: the Freepaid SOAP API and the SIMcloud REST API. Built for enterprise back offices and Windows shops. These samples are tested on every push against the local mock servers.
 
 [All languages](README.md) · [Repository home](../README.md)
 
@@ -60,7 +60,6 @@ More in the [prepaid electricity guide](../prepaid-electricity/README.md).
 - WCF, `svcutil` and "Add Service Reference" cannot consume the Freepaid WSDL (RPC/encoded). Post the envelope with `HttpClient`.
 - Use `CultureInfo.InvariantCulture` for every number you send, so `10.00` never becomes `10,00`.
 - Reuse one `HttpClient` for the life of the application.
-- **Not compiled in this repository** (no .NET SDK was available). The logic matches the tested Java and Go samples. Run it against the mock first.
 
 ## Safety rules that apply in every language
 

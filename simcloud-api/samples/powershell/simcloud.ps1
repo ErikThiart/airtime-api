@@ -16,8 +16,7 @@
     SIMCLOUD_BASE_URL (live: https://simcloud.co.za), SIMCLOUD_TOKEN, SIMCLOUD_POLL_MS (default 3000)
   Exit codes: 0 for 2xx, 1 for API errors, 3 for an ambiguous network failure on a purchase.
 
-  STATUS: not executed in this repository's test run (no PowerShell was available). It follows the same
-  logic as the tested samples. Run it against the mock first.
+  STATUS: run against the mock server by this repository's CI (tests/run-samples.sh) on PowerShell 7.
 #>
 param(
     [Parameter(Position = 0)][string]$Command,

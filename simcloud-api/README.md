@@ -79,12 +79,14 @@ python3 simcloud.py balance      # safe: reads only
 | Ruby | [`samples/ruby`](samples/ruby) | Yes |
 | Swift | [`samples/swift`](samples/swift) | Yes |
 | cURL / Bash | [`samples/curl`](samples/curl) | Yes |
-| C# / .NET | [`samples/csharp`](samples/csharp) | **Not compiled** (no .NET SDK available) |
-| PowerShell | [`samples/powershell`](samples/powershell) | **Not executed** |
+| C# / .NET | [`samples/csharp`](samples/csharp) | Yes (CI, Linux) |
+| PowerShell | [`samples/powershell`](samples/powershell) | Yes (CI, Linux) |
 | Oracle PL/SQL | [`samples/plsql`](samples/plsql) | **Not executed** |
 | SAP ABAP | [`samples/abap`](samples/abap) | **Not executed** |
 
 "Tested" means the sample passed every check in [`tests/run-samples.sh`](tests/run-samples.sh): balance, network lookup (found and invalid), filtered data catalogue, SMS (accepted, rejected, quotes in the text), an airtime order that is queued then polled to `delivered`, a prepaid electricity order (meter check, purchase, polling, key-change tokens first, same reference returns the original result, reference conflict), the 5-minute duplicate (409), a wrong token (401), and an unreachable server on a purchase (exit code 3, meaning "outcome unknown, do not retry").
+
+The tests run on every push in [GitHub Actions](../.github/workflows/ci.yml) (Ubuntu, with .NET, PowerShell and Swift). Run them yourself:
 
 ```bash
 ./tests/run-samples.sh            # every language installed on your machine

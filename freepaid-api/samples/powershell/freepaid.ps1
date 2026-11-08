@@ -14,8 +14,7 @@
   Environment (defaults target the local mock, so nothing spends money):
     FREEPAID_ENDPOINT, FREEPAID_USER, FREEPAID_PASS
 
-  STATUS: not executed in this repository's test run (no PowerShell was available). It sends the
-  same envelope as the tested samples. Run it against the mock first.
+  STATUS: run against the mock server by this repository's CI (tests/run-samples.sh) on PowerShell 7.
 #>
 param(
     [Parameter(Position = 0)][string]$Command,
