@@ -1,0 +1,6 @@
+.sample-bin
+__pycache__/
+*.pyc
+bin/
+obj/
+.DS_Store

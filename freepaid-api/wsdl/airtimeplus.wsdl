@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="https://ws.freepaid.co.za:443/airtimeplus/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="https://ws.freepaid.co.za:443/airtimeplus/">
+<types>
+<xsd:schema targetNamespace="https://ws.freepaid.co.za:443/airtimeplus/"
+>
+ <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+ <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
+ <xsd:complexType name="fetchBalanceIn">
+  <xsd:all>
+   <xsd:element name="user" type="xsd:int" pattern="[1-9][0-9]+"/>
+   <xsd:element name="pass" type="xsd:string" pattern=".+"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="fetchBalanceOut">
+  <xsd:all>
+   <xsd:element name="status" type="xsd:int" pattern="(0|1)"/>
+   <xsd:element name="errorcode" type="xsd:string"/>
+   <xsd:element name="message" type="xsd:string"/>
+   <xsd:element name="balance" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="placeOrderIn">
+  <xsd:all>
+   <xsd:element name="user" type="xsd:int" pattern="[1-9][0-9]+"/>
+   <xsd:element name="pass" type="xsd:string" pattern=".+"/>
+   <xsd:element name="refno" type="xsd:string" pattern=".+"/>
+   <xsd:element name="network" type="xsd:string" pattern=".+"/>
+   <xsd:element name="sellvalue" type="xsd:float" pattern="[1-9][0-9]*([.][0-9][0-9])"/>
+   <xsd:element name="count" type="xsd:int" pattern="[1-9][0-9]*"/>
+   <xsd:element name="extra" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="placeOrderOut">
+  <xsd:all>
+   <xsd:element name="status" type="xsd:int" pattern="(0|1)"/>
+   <xsd:element name="errorcode" type="xsd:string"/>
+   <xsd:element name="message" type="xsd:string"/>
+   <xsd:element name="balance" type="xsd:float"/>
+   <xsd:element name="orderno" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="fetchOrderIn">
+  <xsd:all>
+   <xsd:element name="user" type="xsd:int" pattern="[1-9][0-9]+"/>
+   <xsd:element name="pass" type="xsd:string" pattern=".+"/>
+   <xsd:element name="orderno" type="xsd:string" pattern="[0-9]+"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="voucher">
+  <xsd:all>
+   <xsd:element name="network" type="xsd:string"/>
+   <xsd:element name="sellvalue" type="xsd:float"/>
+   <xsd:element name="pin" type="xsd:string"/>
+   <xsd:element name="serial" type="xsd:string"/>
+   <xsd:element name="costprice" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="vouchers">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:voucher[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="fetchOrderOut">
+  <xsd:all>
+   <xsd:element name="status" type="xsd:int" pattern="(0|1)"/>
+   <xsd:element name="errorcode" type="xsd:string"/>
+   <xsd:element name="message" type="xsd:string"/>
+   <xsd:element name="balance" type="xsd:float"/>
+   <xsd:element name="orderno" type="xsd:string"/>
+   <xsd:element name="vouchers" type="tns:vouchers"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="fetchOrderLatestIn">
+  <xsd:all>
+   <xsd:element name="user" type="xsd:int" pattern="[1-9][0-9]+"/>
+   <xsd:element name="pass" type="xsd:string" pattern=".+"/>
+   <xsd:element name="last" type="xsd:string" pattern="[0-9]*"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="queryOrderIn">
+  <xsd:all>
+   <xsd:element name="user" type="xsd:int" pattern="[1-9][0-9]+"/>
+   <xsd:element name="pass" type="xsd:string" pattern=".+"/>
+   <xsd:element name="orderno" type="xsd:string" pattern="[0-9]+"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="queryOrderOut">
+  <xsd:all>
+   <xsd:element name="status" type="xsd:int" pattern="(0|1)"/>
+   <xsd:element name="errorcode" type="xsd:string"/>
+   <xsd:element name="message" type="xsd:string"/>
+   <xsd:element name="balance" type="xsd:float"/>
+   <xsd:element name="orderno" type="xsd:string"/>
+   <xsd:element name="costprice" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="fetchProductsIn">
+  <xsd:all>
+   <xsd:element name="user" type="xsd:int" pattern="[1-9][0-9]+"/>
+   <xsd:element name="pass" type="xsd:string" pattern=".+"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="product">
+  <xsd:all>
+   <xsd:element name="description" type="xsd:string"/>
+   <xsd:element name="network" type="xsd:string"/>
+   <xsd:element name="sellvalue" type="xsd:float"/>
+   <xsd:element name="costprice" type="xsd:float"/>
+   <xsd:element name="groupname" type="xsd:string"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="products">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:product[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="fetchProductsOut">
+  <xsd:all>
+   <xsd:element name="status" type="xsd:int" pattern="(0|1)"/>
+   <xsd:element name="errorcode" type="xsd:string"/>
+   <xsd:element name="message" type="xsd:string"/>
+   <xsd:element name="balance" type="xsd:float"/>
+   <xsd:element name="products" type="tns:products"/>
+  </xsd:all>
+ </xsd:complexType>
+</xsd:schema>
+</types>
+<message name="fetchBalanceRequest">
+  <part name="request" type="tns:fetchBalanceIn" /></message>
+<message name="fetchBalanceResponse">
+  <part name="reply" type="tns:fetchBalanceOut" /></message>
+<message name="placeOrderRequest">
+  <part name="request" type="tns:placeOrderIn" /></message>
+<message name="placeOrderResponse">
+  <part name="reply" type="tns:placeOrderOut" /></message>
+<message name="fetchOrderRequest">
+  <part name="request" type="tns:fetchOrderIn" /></message>
+<message name="fetchOrderResponse">
+  <part name="reply" type="tns:fetchOrderOut" /></message>
+<message name="fetchOrderLatestRequest">
+  <part name="request" type="tns:fetchOrderLatestIn" /></message>
+<message name="fetchOrderLatestResponse">
+  <part name="reply" type="tns:fetchOrderOut" /></message>
+<message name="queryOrderRequest">
+  <part name="request" type="tns:queryOrderIn" /></message>
+<message name="queryOrderResponse">
+  <part name="reply" type="tns:queryOrderOut" /></message>
+<message name="fetchProductsRequest">
+  <part name="request" type="tns:fetchProductsIn" /></message>
+<message name="fetchProductsResponse">
+  <part name="reply" type="tns:fetchProductsOut" /></message>
+<portType name="airtimeplusPortType">
+  <operation name="fetchBalance">
+    <documentation>Fetch your current balance. 'user' is your user number and 'pass' is your password. 'status' will always contain the result of the request: 1 = success, 0 = failure. 'errorcode' is a secondary code describing e.g. why a request failed. 'message' is an extended status message. 'balance' is your current balance, assuming it got that far in the request. For sample code, please visit https://ws.freepaid.co.za:443/airtimeplus/sample.html</documentation>
+    <input message="tns:fetchBalanceRequest"/>
+    <output message="tns:fetchBalanceResponse"/>
+  </operation>
+  <operation name="placeOrder">
+    <documentation>Place order for multiple vouchers. 'user' is your user number and 'pass' is your password. 'refno' should be a unique reference number for the request, but uniqueness is not enforced. 'network' is the voucher network. 'sellvalue' is the voucher sell value. 'count' is the number of vouchers. 'extra' is required in certain cases, eg. pinless recharges. 'status' will always contain the result of the request: 1 = success, 0 = failure. 'errorcode' is a secondary code describing e.g. why a request failed. 'message' is an extended status message. 'balance' is the remaining balance after the voucher request, regardless of whether the request succeeded or not, assuming it got that far in the request. 'orderno' is our unique order number, to be used in the fetchOrder call. Pinless orders must use the queryOrder call for proper status. For sample code, please visit https://ws.freepaid.co.za:443/airtimeplus/sample.html</documentation>
+    <input message="tns:placeOrderRequest"/>
+    <output message="tns:placeOrderResponse"/>
+  </operation>
+  <operation name="fetchOrder">
+    <documentation>Returns order placed with placeOrder call. 'user' is your user number and 'pass' is your password. 'orderno' should be the unique order number returned in the placeOrder call. 'status' will always contain the result of the request: 1 = success, 0 = failure. 'errorcode' is a secondary code describing e.g. why a request failed. 'message' is an extended status message. 'balance' is your current balance, assuming it got that far in the request. 'orderno' contains the number of the order that was fetched. 'vouchers' refers to the issued vouchers. For sample code, please visit https://ws.freepaid.co.za:443/airtimeplus/sample.html</documentation>
+    <input message="tns:fetchOrderRequest"/>
+    <output message="tns:fetchOrderResponse"/>
+  </operation>
+  <operation name="fetchOrderLatest">
+    <documentation>Returns order placed with placeOrder call. 'user' is your user number and 'pass' is your password. 'last' should be the last order number you've fetched from us. 'status' will always contain the result of the request: 1 = success, 0 = failure. 'errorcode' is a secondary code describing e.g. why a request failed. 'message' is an extended status message. 'balance' is your current balance, assuming it got that far in the request. 'orderno' contains the number of the order that was fetched. 'vouchers' refers to the issued vouchers. For sample code, please visit https://ws.freepaid.co.za:443/airtimeplus/sample.html</documentation>
+    <input message="tns:fetchOrderLatestRequest"/>
+    <output message="tns:fetchOrderLatestResponse"/>
+  </operation>
+  <operation name="queryOrder">
+    <documentation>Query pinless order placed with placeOrder call. 'user' is your user number and 'pass' is your password. 'orderno' should be the unique order number returned in the placeOrder call. 'status' will always contain the result of the request: 1 = success, 0 = failure. 'errorcode' is a secondary code describing e.g. why a request failed. 'message' is an extended status message. 'balance' is your current balance, assuming it got that far in the request. For sample code, please visit https://ws.freepaid.co.za:443/airtimeplus/sample.html</documentation>
+    <input message="tns:queryOrderRequest"/>
+    <output message="tns:queryOrderResponse"/>
+  </operation>
+  <operation name="fetchProducts">
+    <documentation>Fetch list of products. 'user' is your user number and 'pass' is your password. 'status' will always contain the result of the request: 1 = success, 0 = failure. 'errorcode' is a secondary code describing e.g. why a request failed. 'message' is an extended status message. 'balance' is your current balance, assuming it got that far in the request. 'products' is a list of products. Note that the cost price is not always available and will be shown as a 0 when not known. For sample code, please visit https://ws.freepaid.co.za:443/airtimeplus/sample.html</documentation>
+    <input message="tns:fetchProductsRequest"/>
+    <output message="tns:fetchProductsResponse"/>
+  </operation>
+</portType>
+<binding name="airtimeplusBinding" type="tns:airtimeplusPortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="fetchBalance">
+    <soap:operation soapAction="https://ws.freepaid.co.za:443/airtimeplus/fetchBalance" style="rpc"/>
+    <input><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="placeOrder">
+    <soap:operation soapAction="https://ws.freepaid.co.za:443/airtimeplus/placeOrder" style="rpc"/>
+    <input><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fetchOrder">
+    <soap:operation soapAction="https://ws.freepaid.co.za:443/airtimeplus/fetchOrder" style="rpc"/>
+    <input><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fetchOrderLatest">
+    <soap:operation soapAction="https://ws.freepaid.co.za:443/airtimeplus/fetchOrderLatest" style="rpc"/>
+    <input><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="queryOrder">
+    <soap:operation soapAction="https://ws.freepaid.co.za:443/airtimeplus/queryOrder" style="rpc"/>
+    <input><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+  <operation name="fetchProducts">
+    <soap:operation soapAction="https://ws.freepaid.co.za:443/airtimeplus/fetchProducts" style="rpc"/>
+    <input><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input>
+    <output><soap:body use="encoded" namespace="https://ws.freepaid.co.za:443/airtimeplus/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output>
+  </operation>
+</binding>
+<service name="airtimeplus">
+  <port name="airtimeplusPort" binding="tns:airtimeplusBinding">
+    <soap:address location="https://ws.freepaid.co.za:443/airtimeplus/"/>
+  </port>
+</service>
+</definitions>

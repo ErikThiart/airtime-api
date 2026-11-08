@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "simcloud": {
+      "type": "http",
+      "url": "https://simcloud.co.za/api/mcp.php"
+    }
+  }
+}
