@@ -1,19 +1,47 @@
-# Freepaid Airtime API 
-### Seamless integration & customisable Airtime API
+# Freepaid Airtime API
 
-This is an API that enables you to order Vodacom, Cell C, MTN and Telkom Airtime and Data.
+SOAP API for selling **Vodacom, MTN, Cell C and Telkom** airtime and data in South Africa, at wholesale prices, in real time. The examples are in PHP, but any language that speaks SOAP will work.
 
 ![Image of Freepaid](https://i.imgur.com/nfF48Jk.png)
 
+| | |
+|---|---|
+| **Protocol** | SOAP (WSDL) |
+| **Live endpoint** | `https://ws.freepaid.co.za/airtimeplus/` |
+| **Test endpoint** | `http://ws.test.freepaid.co.za/airtimeplus/` |
+| **WSDL** | [ws.freepaid.co.za/airtimeplus/?wsdl](https://ws.freepaid.co.za/airtimeplus/?wsdl) |
+| **Products** | PINLESS airtime (direct recharge), PINLESS data, PINNED airtime vouchers |
+| **Access fee** | R99.00 per month plus VAT |
+| **Support** | apisupport@freepaid.co.za |
 
-Airtime API (Data and Airtime)
-==============================
+## Contents
 
-![Sell MTN, Vodacom, Cell C airtime via an airtime API](https://freepaid.co.za/images/product-pages/sell-airtime-using-the-airtime-api.jpg)
+- [Quick start](#quick-start)
+- [API overview](#api-overview)
+- [Step 1: Sandbox account](#step-1-register-on-the-development-server-and-get-monopoly-money)
+- [Step 2: Environment](#step-2-setting-up-your-environment)
+- [Step 3: Process flow](#step-3-getting-to-understand-the-process-flow)
+- [Step 4: Go live](#step-4-go-live)
+- [FAQ and error codes](#faq)
+- [Sample code](#sample-code)
 
-Easily order and receive Vodacom, Cell C, MTN and Telkom Airtime or Data bundles in real time at wholesale prices, from one source.
+## Quick start
 
-Freepaid’s API provides seamless, real time access to a wide range of pinned and pinless prepaid products at our transparent, competitive prices. This state-of-the-art programming interface does all the heavy lifting for you. It puts the programming power into your hands, freeing you to put your energy into your own development. Its clean, simple structure cuts down on implementation times and support queries. And once integrated, your application will be supported by unprecedented speed and reliability. Access fee is R99.00 per month plus VAT.
+1. Register on the [Development server](http://test.freepaid.co.za/home.html) and email apisupport@freepaid.co.za to get test funds (details in Step 1).
+2. Call `fetchBalance` to confirm your user number and password work.
+3. Call `fetchProducts` to list what you can order.
+4. Call `placeOrder` to buy. For PINLESS, poll `queryOrder` for the result. For PINNED, call `fetchOrderLatest` to get the PIN.
+5. Switch the endpoint to the live URL and use your live credentials.
+
+| Call | Purpose |
+|------|---------|
+| `fetchBalance` | Wallet balance |
+| `fetchProducts` | Available networks and denominations |
+| `placeOrder` | Order a PINNED voucher or a PINLESS recharge |
+| `queryOrder` | Status of a PINLESS order (`Success` or `Failure`) |
+| `fetchOrderLatest` | Fetch PINNED vouchers, including the PIN and serial number |
+
+Keep your user number and password in environment variables or protected config, never in source control. The examples below use placeholders such as `USERXXXX` and `PASSXXXX`.
 
 API Overview
 ------------
@@ -432,41 +460,13 @@ Please feel free to send us sample code and snippets, currently only sample code
 ```
 
 
-Follow Us
----------
+## Support and contact
 
--   [Twitter](https://twitter.com/freepaidcoza)
--   [Facebook](https://www.facebook.com/Freepaid.co.za/)
--   [LinkedIn](https://www.linkedin.com/company/freepaid/)
+- Email: apisupport@freepaid.co.za
+- Phone: 087 073 6555 (office hours)
+- Website: [freepaid.co.za](https://freepaid.co.za) | [Airtime API product page](https://freepaid.co.za/airtime-api.php)
+- Social: [Twitter](https://twitter.com/freepaidcoza), [Facebook](https://www.facebook.com/Freepaid.co.za/), [LinkedIn](https://www.linkedin.com/company/freepaid/)
 
+Office: 104, Building Five, Tygervalley Chambers, 27 Willie van Schoor Drive, Bellville, Western Cape.
 
- **Office Number:** [087 073 6555](tel:0870736555)
-
-* * * * *
-
-**Office Address:**
-
-104, Building Five, Tygervalley Chambers,
- 27 Willie van Schoor Drive,
- Bellville,
- Western Cape
-
--   2021 © **FREEPAID (PTY) LTD.** All rights reserved Office: 087 073 6555
-
-Menu
-----
-
--   [Home](https://freepaid.co.za/index.php)
--   [Freepaid Login](http://services.freepaid.co.za/home.html)
--   [Blog](https://www.freepaid.co.za/blog/)
--   [About Us](https://freepaid.co.za/about.php)
--   [Airtime API](https://freepaid.co.za/airtime-api.php)
--   [SIM Batch Recharge](https://freepaid.co.za/recharge-simcards.php)
--   [Free Wifi Solutions](https://freepaid.co.za/free-wifi-captive-portal-solutions.php)
--   [Bulk Airtime Printing](https://freepaid.co.za/bulk-airtime.php)
--   [Point Of Sale](https://freepaid.co.za/point-of-sale-airtime.php)
--   [Top Up Now](https://freepaid.co.za/buy-airtime.php)
--   [Start Your Own Business](https://freepaid.co.za/start-your-own-business.php)
--   [Simplified Airtime API](https://freepaid.co.za/simplified-airtime-api.php)
--   [Pinless Airtime](https://freepaid.co.za/pinless-airtime.php)
--   [Contact us](https://freepaid.co.za/contact-airtime-factory.php)
+Documentation maintained by [Erik Thiart](https://github.com/ErikThiart). Copyright FREEPAID (PTY) LTD. All rights reserved.
