@@ -13,6 +13,9 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking // Linux
 #endif
+#if canImport(FoundationXML)
+import FoundationXML // Linux
+#endif
 
 let ns = "https://ws.freepaid.co.za:443/airtimeplus/"
 let env = ProcessInfo.processInfo.environment

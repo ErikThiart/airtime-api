@@ -39,6 +39,7 @@ jobs:
       - name: Freepaid samples
         run: ./freepaid-api/tests/run-samples.sh
       - name: SIMcloud samples
+        if: always()
         run: ./simcloud-api/tests/run-samples.sh
 
   site:
