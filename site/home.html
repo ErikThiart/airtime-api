@@ -1,0 +1,107 @@
+<div class="landing">
+  <section class="hero">
+    <a class="pill" href="https://github.com/ErikThiart/airtime-api/actions/workflows/ci.yml"><span class="dot"></span> Open source · MIT · tested in CI</a>
+    <h1>Airtime and prepaid electricity APIs, documented properly</h1>
+    <p class="lead">Guides, references and sample code in 13 languages for the Freepaid airtime API, the SIMcloud API and the SIMcloud MCP server. Build and test against a local mock first, with no account and no money.</p>
+    <div class="cta">
+      <a class="btn btn-primary btn-lg" href="{{root}}simcloud-api/docs/getting-started/">Get started</a>
+      <a class="btn btn-outline btn-lg" href="{{root}}prepaid-electricity/">Prepaid electricity guide</a>
+      <a class="btn btn-outline btn-lg" href="https://github.com/ErikThiart/airtime-api">GitHub</a>
+    </div>
+    <div class="demo">
+<pre><code class="language-bash">git clone https://github.com/ErikThiart/airtime-api.git &amp;&amp; cd airtime-api/simcloud-api
+python3 mock-server/mock_simcloud.py &amp;     # local mock, no money
+
+cd samples/python
+python3 simcloud.py airtime 0821234567 vodacom 10 "Airtime for John"
+python3 simcloud.py electricity 01234567890 150 0821234567 UnitB-2026-11</code></pre>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Three APIs, one set of conventions</h2>
+    <p class="sub">Every folder has guides, a field-by-field reference, runnable samples, a mock server and tests.</p>
+    <div class="grid three">
+      <a class="card" href="{{root}}simcloud-api/">
+        <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg></span>
+        <h3>SIMcloud REST API</h3>
+        <p>Airtime, data bundles, SMS, VAS vouchers, prepaid electricity, balance and history, as JSON over HTTPS.</p>
+        <span class="meta"><span class="badge badge-warn">JSON</span><span class="badge badge-warn">OpenAPI</span></span>
+      </a>
+      <a class="card" href="{{root}}freepaid-api/">
+        <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg></span>
+        <h3>Freepaid airtime API</h3>
+        <p>Wholesale PINLESS and PINNED airtime and data for Vodacom, MTN, Cell C and Telkom. SOAP, with the RPC/encoded gotchas solved.</p>
+        <span class="meta"><span class="badge badge-warn">SOAP</span><span class="badge badge-warn">WSDL</span></span>
+      </a>
+      <a class="card" href="{{root}}simcloud-mcp/">
+        <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg></span>
+        <h3>SIMcloud MCP server</h3>
+        <p>Let Claude, ChatGPT, Codex, Cursor or VS Code use a SIMcloud account, with approval rules and ten worked use cases.</p>
+        <span class="meta"><span class="badge badge-warn">OAuth</span><span class="badge badge-warn">MCP</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Prepaid electricity from code</h2>
+    <p class="sub">Few providers publish developer documentation for prepaid electricity. This guide covers the whole flow.</p>
+    <div class="grid three">
+      <a class="card feature" href="{{root}}prepaid-electricity/">
+        <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M5 8l7 4 7-4"/><path d="M3 6l9-4 9 4v12l-9 4-9-4z"/></svg></span>
+        <h3>Check, buy, poll</h3>
+        <p>Validate the meter, place an order with a unique reference, and poll for the token.</p>
+      </a>
+      <a class="card feature" href="{{root}}prepaid-electricity/how-it-works/">
+        <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></svg></span>
+        <h3>Tokens and key changes</h3>
+        <p>Why key-change tokens go first, how the fee is calculated, and what each order state means.</p>
+      </a>
+      <a class="card feature" href="{{root}}prepaid-electricity/faq/">
+        <span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></span>
+        <h3>Never buy twice</h3>
+        <p>Timeouts, 202 responses and duplicate protection: the rules that keep money safe.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Samples in 13 languages</h2>
+    <p class="sub">Green means the sample passes the full scenario against the mock on every push.</p>
+    <div class="chips">
+      <a class="chip" href="{{root}}languages/airtime-api-java/"><i></i>Java</a>
+      <a class="chip" href="{{root}}languages/airtime-api-csharp/"><i></i>C# and .NET</a>
+      <a class="chip" href="{{root}}languages/airtime-api-python/"><i></i>Python</a>
+      <a class="chip" href="{{root}}languages/airtime-api-go/"><i></i>Go</a>
+      <a class="chip" href="{{root}}languages/airtime-api-nodejs/"><i></i>Node.js</a>
+      <a class="chip" href="{{root}}languages/airtime-api-typescript/"><i></i>TypeScript</a>
+      <a class="chip" href="{{root}}languages/airtime-api-php/"><i></i>PHP</a>
+      <a class="chip" href="{{root}}languages/airtime-api-ruby/"><i></i>Ruby</a>
+      <a class="chip" href="{{root}}languages/airtime-api-swift/"><i></i>Swift</a>
+      <a class="chip" href="{{root}}languages/airtime-api-powershell/"><i></i>PowerShell</a>
+      <a class="chip" href="{{root}}languages/airtime-api-bash-curl/"><i></i>Bash and cURL</a>
+      <a class="chip untested" href="{{root}}languages/airtime-api-oracle-plsql/"><i></i>Oracle PL/SQL</a>
+      <a class="chip untested" href="{{root}}languages/airtime-api-sap-abap/"><i></i>SAP ABAP</a>
+    </div>
+    <p class="sub note">Grey means written but not executed here: no Oracle or SAP system was available.</p>
+  </section>
+
+  <section class="section">
+    <h2>Built for money that cannot be taken back</h2>
+    <p class="sub">Airtime, vouchers and electricity tokens are cash. Every guide is written around that.</p>
+    <div class="grid three">
+      <div class="card feature">
+        <h3>Never retry a purchase blindly</h3>
+        <p>A timeout means the outcome is unknown. Check the order first. Every sample exits with a distinct code for that case.</p>
+      </div>
+      <div class="card feature">
+        <h3>Test with no money</h3>
+        <p>Local mock servers follow the WSDL and the published JSON. Samples default to them, so nothing spends money by accident.</p>
+      </div>
+      <div class="card feature">
+        <h3>Controls for banks</h3>
+        <p>Security and operations guides, a go-live checklist, reconciliation, and no dependencies to vet in the core samples.</p>
+      </div>
+    </div>
+  </section>
+</div>
