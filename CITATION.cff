@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use these guides or samples, please cite them as below."
+title: "South African airtime, data, SMS and electricity APIs: guides and sample code"
+type: software
+authors:
+  - family-names: Thiart
+    given-names: Erik
+    orcid: "https://orcid.org/0009-0008-3562-5795"
+    affiliation: "Freepaid Pty Ltd"
+repository-code: "https://github.com/ErikThiart/airtime-api"
+license: MIT
+version: "1.0.0"
+date-released: "2026-11-12"
+keywords:
+  - prepaid airtime
+  - prepaid electricity
+  - South Africa
+  - SOAP
+  - REST API
+  - Model Context Protocol
+  - sample code
+  - mock server

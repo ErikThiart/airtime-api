@@ -1,0 +1,34 @@
+{
+  "title": "South African airtime, data, SMS and electricity APIs: guides and sample code",
+  "upload_type": "software",
+  "description": "<p>Integration guides, field-by-field references and runnable sample code in 13 languages for two South African prepaid platforms from Freepaid Pty Ltd: the Freepaid Airtime API (SOAP, RPC/encoded) and the SIMcloud REST API for airtime, data, SMS, vouchers and prepaid electricity. Also covers the SIMcloud MCP server for AI assistants and a guide to buying prepaid electricity from code.</p><p>Each API folder ships a local mock server, so the samples can be built and tested offline with no account and no money. The samples are run against the mocks in CI. The PL/SQL and ABAP samples are written but not executed.</p>",
+  "creators": [
+    {
+      "name": "Thiart, Erik",
+      "affiliation": "Freepaid Pty Ltd",
+      "orcid": "0009-0008-3562-5795"
+    }
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "language": "eng",
+  "keywords": [
+    "prepaid airtime",
+    "prepaid electricity",
+    "South Africa",
+    "telecommunications",
+    "SOAP",
+    "REST API",
+    "Model Context Protocol",
+    "sample code",
+    "mock server",
+    "API integration"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.24172005",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-report"
+    }
+  ]
+}
